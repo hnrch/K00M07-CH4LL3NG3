@@ -1,0 +1,10 @@
+.sidebar {
+  background-color: var(--dark-gray);
+  color: var(--white);
+  padding: 16px;
+}
+
+.sidebar__divider {
+  border-color: var(--light-gray);
+  border-style: solid;
+}

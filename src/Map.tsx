@@ -1,10 +1,18 @@
+import "leaflet/dist/leaflet.css";
+import "./Map.css";
+
 import { useEffect } from "react";
 import "leaflet/dist/leaflet.css";
-import { map as leafletMap, tileLayer } from "leaflet";
+import {
+  map as leafletMap,
+  tileLayer,
+  layerGroup,
+  marker,
+  divIcon,
+} from "leaflet";
 
 const Map = ({ onClick }: any) => {
   useEffect(() => {
-    // Initialize the map
     const map = leafletMap("map", { doubleClickZoom: false }).setView(
       [0, 0],
       2
@@ -17,9 +25,22 @@ const Map = ({ onClick }: any) => {
       }
     ).addTo(map);
 
+    const markers = layerGroup().addTo(map);
+
     const handleClick = (e: any) => {
       const { lat, lng } = e.latlng;
-      onClick({ latitude: lat, longitude: lng });
+      const size = 24;
+      marker([lat, lng], {
+        icon: divIcon({
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2],
+          className: "marker",
+          html: "<span>1</span>",
+        }),
+        draggable: true,
+      }).addTo(markers);
+
+      if (onClick) onClick({ latitude: lat, longitude: lng });
     };
 
     map.on("click", handleClick);
@@ -30,7 +51,7 @@ const Map = ({ onClick }: any) => {
     };
   }, [onClick]);
 
-  return <div id="map" style={{ height: "400px", width: "100%" }}></div>;
+  return <div id="map" style={{ height: "100%", width: "100%" }}></div>;
 };
 
 export default Map;
