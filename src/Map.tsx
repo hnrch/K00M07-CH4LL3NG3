@@ -1,57 +1,80 @@
 import "leaflet/dist/leaflet.css";
 import "./Map.css";
 
-import { useEffect } from "react";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useRef } from "react";
 import {
   map as leafletMap,
   tileLayer,
+  LatLngTuple,
+  LayerGroup,
+  LeafletMouseEventHandlerFn,
   layerGroup,
   marker,
   divIcon,
+  Map as LeafletMap,
 } from "leaflet";
 
-const Map = ({ onClick }: any) => {
+const MAPBOX_TOKEN =
+  "pk.eyJ1IjoiaG5yY2hyZGwiLCJhIjoiY2xxMnBjZnN1MDQyZjJpcGR1aW9pcHFsMiJ9.tPNurWX_oV0Ai-7cetcKyw";
+const TILE_SOURCE = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/{z}/{x}/{y}?access_token=${MAPBOX_TOKEN}`;
+const TILE_ATTRIBUTION = "&copy; Mapbox";
+const INITIAL_CENTER = [52.388, 13.058] as LatLngTuple;
+const INITIAL_ZOOM = 14;
+const MARKER_SIZE = 32;
+
+type Props = {
+  onClick: (waypoint: LatLngTuple) => void;
+  waypoints: LatLngTuple[];
+};
+
+const Map = ({ onClick, waypoints }: Props) => {
+  const waypointLayerGroupRef = useRef<LayerGroup>(layerGroup());
+  const mapRef = useRef<LeafletMap | null>(null);
+
   useEffect(() => {
-    const map = leafletMap("map", { doubleClickZoom: false }).setView(
-      [0, 0],
-      2
+    mapRef.current = leafletMap("map", { doubleClickZoom: false }).setView(
+      INITIAL_CENTER,
+      INITIAL_ZOOM
     );
 
-    tileLayer(
-      "https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaG5yY2hyZGwiLCJhIjoiY2xxMnBjZnN1MDQyZjJpcGR1aW9pcHFsMiJ9.tPNurWX_oV0Ai-7cetcKyw",
-      {
-        attribution: "&copy; Mapbox",
+    tileLayer(TILE_SOURCE, {
+      attribution: TILE_ATTRIBUTION,
+    }).addTo(mapRef.current);
+
+    waypointLayerGroupRef.current.addTo(mapRef.current);
+
+    const handleClick: LeafletMouseEventHandlerFn = (e) => {
+      if (onClick) {
+        const { lat, lng } = e.latlng;
+        onClick([lat, lng]);
       }
-    ).addTo(map);
-
-    const markers = layerGroup().addTo(map);
-
-    const handleClick = (e: any) => {
-      const { lat, lng } = e.latlng;
-      const size = 24;
-      marker([lat, lng], {
-        icon: divIcon({
-          iconSize: [size, size],
-          iconAnchor: [size / 2, size / 2],
-          className: "marker",
-          html: "<span>1</span>",
-        }),
-        draggable: true,
-      }).addTo(markers);
-
-      if (onClick) onClick({ latitude: lat, longitude: lng });
     };
 
-    map.on("click", handleClick);
+    mapRef.current.on("click", handleClick);
 
     return () => {
-      map.off("click", handleClick);
-      map.remove();
+      mapRef.current?.off("click", handleClick);
+      mapRef.current?.remove();
     };
   }, [onClick]);
+
+  useEffect(() => {
+    waypointLayerGroupRef.current.clearLayers();
+
+    waypoints.forEach((waypoint, idx) => {
+      marker(waypoint, {
+        icon: divIcon({
+          iconSize: [MARKER_SIZE, MARKER_SIZE],
+          iconAnchor: [MARKER_SIZE / 2, MARKER_SIZE / 2],
+          className: "marker",
+          html: `<span>${idx}</span>`,
+        }),
+      }).addTo(waypointLayerGroupRef.current);
+    });
+  }, [waypoints]);
 
   return <div id="map" style={{ height: "100%", width: "100%" }}></div>;
 };
 
 export default Map;
+export type { Props as MapProps };

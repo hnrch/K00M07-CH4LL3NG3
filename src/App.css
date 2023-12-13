@@ -1,19 +1,10 @@
-:root {
-  --primary-color: #282c34;
-  --secondary-color: #61dafb;
-  --white: white;
-  --dark-gray: rgba(56, 56, 56);
-  --light-gray: rgba(112, 112, 112);
-}
-
 .app {
   display: flex;
   flex-direction: row;
-  font-family: sans-serif;
   height: 100vh;
 
   > :first-child {
-    width: 320px;
+    width: 400px;
     height: 100%;
   }
 }

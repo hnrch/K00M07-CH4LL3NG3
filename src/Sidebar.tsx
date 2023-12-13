@@ -1,10 +1,17 @@
+import { ReactNode } from "react";
 import "./Sidebar.css";
 
-const Sidebar = () => (
+type Props = {
+  children: ReactNode;
+};
+
+const Sidebar = ({ children }: Props) => (
   <aside className="sidebar">
-    Route Builder
+    <h3>Route Builder</h3>
     <hr className="sidebar__divider" />
+    {children}
   </aside>
 );
 
 export default Sidebar;
+export type { Props as SidebarProps };

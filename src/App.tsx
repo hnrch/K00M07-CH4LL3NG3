@@ -1,17 +1,29 @@
-import React, { useCallback } from "react";
+import { LatLngTuple } from "leaflet";
+import { useCallback, useState } from "react";
 import "./App.css";
 import Map from "./Map";
 import Sidebar from "./Sidebar";
+import WaypointList from "./WaypointList";
 
 function App() {
-  const onMapClick = useCallback((location: any) => {
-    console.log(location);
+  const [waypoints, setWaypoints] = useState<LatLngTuple[]>([]);
+
+  const onWaypointAdd = useCallback((waypoint: LatLngTuple) => {
+    setWaypoints((waypoints) => [...waypoints, waypoint]);
+  }, []);
+
+  const onWaypointRemove = useCallback((idxToRemove: number) => {
+    setWaypoints((waypoints) =>
+      waypoints.filter((_, idx) => idx !== idxToRemove)
+    );
   }, []);
 
   return (
     <div className="app">
-      <Sidebar />
-      <Map onClick={onMapClick} />
+      <Sidebar>
+        <WaypointList waypoints={waypoints} onRemove={onWaypointRemove} />
+      </Sidebar>
+      <Map onClick={onWaypointAdd} waypoints={waypoints} />
     </div>
   );
 }
