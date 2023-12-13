@@ -19,12 +19,27 @@ function App() {
     );
   }, []);
 
+  const onWaypointChange = useCallback(
+    (waypointUpdate: LatLngTuple, idxToChange: number) => {
+      setWaypoints((waypoints) =>
+        waypoints.map((waypoint, idx) =>
+          idx === idxToChange ? waypointUpdate : waypoint
+        )
+      );
+    },
+    []
+  );
+
   return (
     <div className="app">
       <Sidebar>
         <WaypointList waypoints={waypoints} onRemove={onWaypointRemove} />
       </Sidebar>
-      <Map onClick={onWaypointAdd} waypoints={waypoints} />
+      <Map
+        waypoints={waypoints}
+        onWaypointAdd={onWaypointAdd}
+        onWaypointChange={onWaypointChange}
+      />
     </div>
   );
 }

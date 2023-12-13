@@ -24,11 +24,16 @@ const INITIAL_ZOOM = 14;
 const MARKER_SIZE = 32;
 
 type Props = {
-  onClick: (waypoint: LatLngTuple) => void;
   waypoints: LatLngTuple[];
+  onWaypointAdd: (waypoint: LatLngTuple) => void;
+  onWaypointChange: (waypoint: LatLngTuple, idx: number) => void;
 };
 
-const Map = ({ onClick, waypoints }: Props) => {
+const Map = ({
+  waypoints,
+  onWaypointAdd: onClick,
+  onWaypointChange,
+}: Props) => {
   const mapRef = useRef<LeafletMap | null>(null);
 
   const waypointMarkerLayerGroupRef = useRef<LayerGroup>(layerGroup());
@@ -67,14 +72,20 @@ const Map = ({ onClick, waypoints }: Props) => {
     waypointPolylineLayerGroupRef.current.clearLayers();
 
     waypoints.forEach((waypoint, idx) => {
-      marker(waypoint, {
+      const waypointMarker = marker(waypoint, {
         icon: divIcon({
           iconSize: [MARKER_SIZE, MARKER_SIZE],
           iconAnchor: [MARKER_SIZE / 2, MARKER_SIZE / 2],
           className: "marker",
           html: `<span>${idx}</span>`,
         }),
+        draggable: true,
       }).addTo(waypointMarkerLayerGroupRef.current);
+
+      waypointMarker.on("dragend", function (e) {
+        const { lat, lng } = e.target.getLatLng();
+        onWaypointChange([lat, lng], idx);
+      });
 
       if (idx !== 0) {
         const previousWaypoint = waypoints[idx - 1];
@@ -85,7 +96,7 @@ const Map = ({ onClick, waypoints }: Props) => {
         }).addTo(waypointPolylineLayerGroupRef.current);
       }
     });
-  }, [waypoints]);
+  }, [onWaypointChange, waypoints]);
 
   return <div id="map" style={{ height: "100%", width: "100%" }}></div>;
 };
