@@ -12,6 +12,7 @@ import {
   marker,
   divIcon,
   Map as LeafletMap,
+  polyline,
 } from "leaflet";
 
 const MAPBOX_TOKEN =
@@ -28,8 +29,10 @@ type Props = {
 };
 
 const Map = ({ onClick, waypoints }: Props) => {
-  const waypointLayerGroupRef = useRef<LayerGroup>(layerGroup());
   const mapRef = useRef<LeafletMap | null>(null);
+
+  const waypointMarkerLayerGroupRef = useRef<LayerGroup>(layerGroup());
+  const waypointPolylineLayerGroupRef = useRef<LayerGroup>(layerGroup());
 
   useEffect(() => {
     mapRef.current = leafletMap("map", { doubleClickZoom: false }).setView(
@@ -41,7 +44,8 @@ const Map = ({ onClick, waypoints }: Props) => {
       attribution: TILE_ATTRIBUTION,
     }).addTo(mapRef.current);
 
-    waypointLayerGroupRef.current.addTo(mapRef.current);
+    waypointMarkerLayerGroupRef.current.addTo(mapRef.current);
+    waypointPolylineLayerGroupRef.current.addTo(mapRef.current);
 
     const handleClick: LeafletMouseEventHandlerFn = (e) => {
       if (onClick) {
@@ -59,7 +63,8 @@ const Map = ({ onClick, waypoints }: Props) => {
   }, [onClick]);
 
   useEffect(() => {
-    waypointLayerGroupRef.current.clearLayers();
+    waypointMarkerLayerGroupRef.current.clearLayers();
+    waypointPolylineLayerGroupRef.current.clearLayers();
 
     waypoints.forEach((waypoint, idx) => {
       marker(waypoint, {
@@ -69,7 +74,16 @@ const Map = ({ onClick, waypoints }: Props) => {
           className: "marker",
           html: `<span>${idx}</span>`,
         }),
-      }).addTo(waypointLayerGroupRef.current);
+      }).addTo(waypointMarkerLayerGroupRef.current);
+
+      if (idx !== 0) {
+        const previousWaypoint = waypoints[idx - 1];
+        polyline([waypoint, previousWaypoint], {
+          color: "#3D83E3",
+          weight: 5,
+          opacity: 0.9,
+        }).addTo(waypointPolylineLayerGroupRef.current);
+      }
     });
   }, [waypoints]);
 

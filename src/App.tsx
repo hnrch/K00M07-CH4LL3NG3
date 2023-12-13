@@ -1,6 +1,7 @@
+import "./App.css";
+
 import { LatLngTuple } from "leaflet";
 import { useCallback, useState } from "react";
-import "./App.css";
 import Map from "./Map";
 import Sidebar from "./Sidebar";
 import WaypointList from "./WaypointList";
