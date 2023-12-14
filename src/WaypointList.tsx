@@ -12,12 +12,12 @@ type Props = {
 const WaypointList = ({ waypoints, onRemove, onSort }: Props) => {
   return (
     <ul className="waypoint-list">
-      {/* @ts-expect-error - TODO: how to fix this? */}
-      <DraggableList
-        itemTagName="li"
-        itemClassName="waypoint-list__item"
-        renderItem={(_item: any, idx: any) => (
-          <>
+      <DraggableList onChange={onSort}>
+        {waypoints.map((waypoint, idx) => (
+          <li
+            key={`${waypoint[0]}-${waypoint[1]}`}
+            className="waypoint-list__item"
+          >
             <Menu color="gray" size={16} />
             <span>Waypoint {idx + 1}</span>
             <span
@@ -27,11 +27,9 @@ const WaypointList = ({ waypoints, onRemove, onSort }: Props) => {
             >
               <Trash2 color="gray" size={16} />
             </span>
-          </>
-        )}
-        items={waypoints}
-        onChange={onSort}
-      />
+          </li>
+        ))}
+      </DraggableList>
     </ul>
   );
 };
