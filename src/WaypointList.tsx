@@ -1,6 +1,7 @@
 import "./WaypointList.css";
 import { LatLngTuple } from "leaflet";
 import DraggableList from "./DraggableList";
+import { Trash2, Menu } from "react-feather";
 
 type Props = {
   waypoints: LatLngTuple[];
@@ -10,23 +11,28 @@ type Props = {
 
 const WaypointList = ({ waypoints, onRemove, onSort }: Props) => {
   return (
-    <div className="waypoint-list">
-      <ul>
-        {/* @ts-expect-error - TODO: how to fix this? */}
-        <DraggableList
-          itemTagName="li"
-          itemClassName="waypoint-list__item"
-          renderItem={(_item: any, idx: any) => (
-            <>
-              Waypoint {idx + 1}
-              <span onClick={() => onRemove(idx)}>del</span>
-            </>
-          )}
-          items={waypoints}
-          onChange={onSort}
-        />
-      </ul>
-    </div>
+    <ul className="waypoint-list">
+      {/* @ts-expect-error - TODO: how to fix this? */}
+      <DraggableList
+        itemTagName="li"
+        itemClassName="waypoint-list__item"
+        renderItem={(_item: any, idx: any) => (
+          <>
+            <Menu color="gray" size={16} />
+            <span>Waypoint {idx + 1}</span>
+            <span
+              className="waypoint-list__remove-btn"
+              role="button"
+              onClick={() => onRemove(idx)}
+            >
+              <Trash2 color="gray" size={16} />
+            </span>
+          </>
+        )}
+        items={waypoints}
+        onChange={onSort}
+      />
+    </ul>
   );
 };
 

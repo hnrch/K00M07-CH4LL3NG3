@@ -1,9 +1,9 @@
 :root {
-  --primary-color: #282c34;
-  --secondary-color: #61dafb;
   --white: white;
-  --dark-gray: rgba(56, 56, 56);
-  --light-gray: rgba(112, 112, 112);
+  --dark-gray: rgb(56, 56, 56);
+  --light-gray: rgb(112, 112, 112);
+  --green: rgb(200, 227, 106);
+  --light-green: color-mix(in srgb, var(--green), #fff 30%);
 }
 
 body {
@@ -24,4 +24,20 @@ ul {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+button {
+  all: unset;
+  line-height: 40px;
+  border-radius: 4px;
+  padding: 0 16px;
+  background-color: var(--green);
+  color: black;
+  box-sizing: border-box;
+  font-weight: bold;
+  text-align: center;
+  &:hover {
+    cursor: pointer;
+    background-color: var(--light-green);
+  }
 }

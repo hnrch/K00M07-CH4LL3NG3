@@ -2,4 +2,15 @@
   padding: 8px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  > :nth-child(2) {
+    flex: 1;
+    margin-left: 8px;
+  }
+}
+
+.waypoint-list__remove-btn {
+  display: flex;
+  align-items: center;
 }

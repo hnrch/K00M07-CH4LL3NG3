@@ -2,9 +2,4 @@
   display: flex;
   flex-direction: row;
   height: 100vh;
-
-  > :first-child {
-    width: 400px;
-    height: 100%;
-  }
 }

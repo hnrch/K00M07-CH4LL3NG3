@@ -7,9 +7,14 @@ type Props = {
 
 const Sidebar = ({ children }: Props) => (
   <aside className="sidebar">
-    <h3>Route Builder</h3>
-    <hr className="sidebar__divider" />
-    {children}
+    <div className="sidebar__header">
+      <h3>Route Builder</h3>
+      <hr className="sidebar__divider" />
+    </div>
+    <div className="sidebar__content">{children}</div>
+    <div className="sidebar__footer">
+      <button>Download .gpx</button>
+    </div>
   </aside>
 );
 

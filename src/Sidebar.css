@@ -1,17 +1,38 @@
 .sidebar {
+  --padding: 16px;
   background-color: var(--dark-gray);
   color: var(--white);
-  padding: 16px;
+  padding: var(--padding);
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  overflow: hidden;
+}
 
+.sidebar__header {
   > h3 {
     margin: 0;
-    padding: 0;
+    padding: 16px 0;
     font-size: 1rem;
     font-weight: bold;
   }
 }
 
 .sidebar__divider {
+  width: 100%;
   border-color: var(--light-gray);
   border-style: solid;
+}
+
+.sidebar__content {
+  flex: 1;
+  overflow: auto;
+  margin: var(--padding) 0;
+}
+
+.sidebar__footer {
+  > button {
+    width: 100%;
+  }
 }
