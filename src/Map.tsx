@@ -77,7 +77,7 @@ const Map = ({
           iconSize: [MARKER_SIZE, MARKER_SIZE],
           iconAnchor: [MARKER_SIZE / 2, MARKER_SIZE / 2],
           className: "marker",
-          html: `<span>${idx}</span>`,
+          html: `<span>${idx + 1}</span>`,
         }),
         draggable: true,
       }).addTo(waypointMarkerLayerGroupRef.current);

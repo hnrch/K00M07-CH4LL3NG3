@@ -30,10 +30,24 @@ function App() {
     []
   );
 
+  const onWaypointSort = useCallback(
+    (idxFrom: number, idxTo: number) => {
+      const waypoint = waypoints[idxFrom];
+      const newWaypoints = waypoints.filter((_, idx) => idx !== idxFrom);
+      newWaypoints.splice(idxTo, 0, waypoint);
+      setWaypoints(newWaypoints);
+    },
+    [waypoints]
+  );
+
   return (
     <div className="app">
       <Sidebar>
-        <WaypointList waypoints={waypoints} onRemove={onWaypointRemove} />
+        <WaypointList
+          waypoints={waypoints}
+          onRemove={onWaypointRemove}
+          onSort={onWaypointSort}
+        />
       </Sidebar>
       <Map
         waypoints={waypoints}
