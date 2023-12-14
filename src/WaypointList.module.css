@@ -1,4 +1,4 @@
-.waypoint-list__item {
+.item {
   padding: 8px;
   display: flex;
   justify-content: space-between;
@@ -10,7 +10,7 @@
   }
 }
 
-.waypoint-list__remove-btn {
+.removebtn {
   display: flex;
   align-items: center;
 }

@@ -1,18 +1,32 @@
-import { ReactNode } from "react";
-import "./Sidebar.css";
+import styles from "./Sidebar.module.css";
+import WaypointList from "./WaypointList";
+
+import type {
+  Waypoint,
+  WaypointRemoveHandler,
+  WaypointSortHandler,
+} from "./App.hooks";
 
 type Props = {
-  children: ReactNode;
+  waypoints: Waypoint[];
+  onWaypointRemove: WaypointRemoveHandler;
+  onWaypointSort: WaypointSortHandler;
 };
 
-const Sidebar = ({ children }: Props) => (
-  <aside className="sidebar">
-    <div className="sidebar__header">
+const Sidebar = ({ waypoints, onWaypointRemove, onWaypointSort }: Props) => (
+  <aside className={styles.wrapper}>
+    <div className={styles.header}>
       <h3>Route Builder</h3>
-      <hr className="sidebar__divider" />
+      <hr className={styles.divider} />
     </div>
-    <div className="sidebar__content">{children}</div>
-    <div className="sidebar__footer">
+    <div className={styles.content}>
+      <WaypointList
+        waypoints={waypoints}
+        onRemove={onWaypointRemove}
+        onSort={onWaypointSort}
+      />
+    </div>
+    <div className={styles.footer}>
       <button>Download .gpx</button>
     </div>
   </aside>

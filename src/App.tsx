@@ -1,54 +1,24 @@
-import "./App.css";
-
-import { LatLngTuple } from "leaflet";
-import { useCallback, useState } from "react";
+import styles from "./App.module.css";
 import Map from "./Map";
 import Sidebar from "./Sidebar";
-import WaypointList from "./WaypointList";
+import { useWaypoints } from "./App.hooks";
 
 function App() {
-  const [waypoints, setWaypoints] = useState<LatLngTuple[]>([]);
-
-  const onWaypointAdd = useCallback((waypoint: LatLngTuple) => {
-    setWaypoints((waypoints) => [...waypoints, waypoint]);
-  }, []);
-
-  const onWaypointRemove = useCallback((idxToRemove: number) => {
-    setWaypoints((waypoints) =>
-      waypoints.filter((_, idx) => idx !== idxToRemove)
-    );
-  }, []);
-
-  const onWaypointChange = useCallback(
-    (waypointUpdate: LatLngTuple, idxToChange: number) => {
-      setWaypoints((waypoints) =>
-        waypoints.map((waypoint, idx) =>
-          idx === idxToChange ? waypointUpdate : waypoint
-        )
-      );
-    },
-    []
-  );
-
-  const onWaypointSort = useCallback(
-    (idxFrom: number, idxTo: number) => {
-      const waypoint = waypoints[idxFrom];
-      const newWaypoints = waypoints.filter((_, idx) => idx !== idxFrom);
-      newWaypoints.splice(idxTo, 0, waypoint);
-      setWaypoints(newWaypoints);
-    },
-    [waypoints]
-  );
+  const {
+    waypoints,
+    onWaypointAdd,
+    onWaypointRemove,
+    onWaypointChange,
+    onWaypointSort,
+  } = useWaypoints();
 
   return (
-    <div className="app">
-      <Sidebar>
-        <WaypointList
-          waypoints={waypoints}
-          onRemove={onWaypointRemove}
-          onSort={onWaypointSort}
-        />
-      </Sidebar>
+    <div className={styles.wrapper}>
+      <Sidebar
+        waypoints={waypoints}
+        onWaypointRemove={onWaypointRemove}
+        onWaypointSort={onWaypointSort}
+      />
       <Map
         waypoints={waypoints}
         onWaypointAdd={onWaypointAdd}

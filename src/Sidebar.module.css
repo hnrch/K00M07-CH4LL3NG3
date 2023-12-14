@@ -1,4 +1,4 @@
-.sidebar {
+.wrapper {
   --padding: 16px;
   background-color: var(--dark-gray);
   color: var(--white);
@@ -7,10 +7,9 @@
   display: flex;
   flex-direction: column;
   max-height: 100%;
-  overflow: hidden;
 }
 
-.sidebar__header {
+.header {
   > h3 {
     margin: 0;
     padding: 16px 0;
@@ -19,19 +18,19 @@
   }
 }
 
-.sidebar__divider {
+.divider {
   width: 100%;
   border-color: var(--light-gray);
   border-style: solid;
 }
 
-.sidebar__content {
+.content {
   flex: 1;
   overflow: auto;
   margin: var(--padding) 0;
 }
 
-.sidebar__footer {
+.footer {
   > button {
     width: 100%;
   }

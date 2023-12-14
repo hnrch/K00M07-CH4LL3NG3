@@ -1,27 +1,29 @@
-import "./WaypointList.css";
-import { LatLngTuple } from "leaflet";
+import styles from "./WaypointList.module.css";
 import DraggableList from "./DraggableList";
 import { Trash2, Menu } from "react-feather";
 
+import type {
+  Waypoint,
+  WaypointRemoveHandler,
+  WaypointSortHandler,
+} from "./App.hooks";
+
 type Props = {
-  waypoints: LatLngTuple[];
-  onRemove: (idxToRemove: number) => void;
-  onSort: (idxFrom: number, idxTo: number) => void;
+  waypoints: Waypoint[];
+  onRemove: WaypointRemoveHandler;
+  onSort: WaypointSortHandler;
 };
 
 const WaypointList = ({ waypoints, onRemove, onSort }: Props) => {
   return (
-    <ul className="waypoint-list">
+    <ul>
       <DraggableList onChange={onSort}>
         {waypoints.map((waypoint, idx) => (
-          <li
-            key={`${waypoint[0]}-${waypoint[1]}`}
-            className="waypoint-list__item"
-          >
+          <li key={`${waypoint[0]}-${waypoint[1]}`} className={styles.item}>
             <Menu color="gray" size={16} />
             <span>Waypoint {idx + 1}</span>
             <span
-              className="waypoint-list__remove-btn"
+              className={styles.removebtn}
               role="button"
               onClick={() => onRemove(idx)}
             >

@@ -15,11 +15,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
-
 ul {
   list-style: none;
   padding: 0;
@@ -32,7 +27,7 @@ button {
   border-radius: 4px;
   padding: 0 16px;
   background-color: var(--green);
-  color: black;
+  color: var(--dark-gray);
   box-sizing: border-box;
   font-weight: bold;
   text-align: center;
