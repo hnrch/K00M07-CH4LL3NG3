@@ -77,7 +77,7 @@ const useMap = ({ waypoints, onWaypointAdd, onWaypointChange }: UseMapArgs) => {
         draggable: true,
       }).addTo(waypointMarkerLayerGroupRef.current);
 
-      // TODO: make sure to unregister this event listener before marker is removed.
+      // TODO: unregister this event listener before marker is removed.
       waypointMarker.on("dragend", function (e) {
         const { lat, lng } = e.target.getLatLng();
         onWaypointChange([lat, lng], idx);
@@ -109,10 +109,10 @@ const useGeodata = () => {
   }, []);
 
   const onWaypointChange = useCallback(
-    (waypointUpdate: LatLngTuple, idxToChange: number) => {
+    (updatedWaypoint: LatLngTuple, idxToChange: number) => {
       setWaypoints((waypoints) =>
         waypoints.map((waypoint, idx) =>
-          idx === idxToChange ? waypointUpdate : waypoint
+          idx === idxToChange ? updatedWaypoint : waypoint
         )
       );
     },
@@ -131,19 +131,16 @@ const useGeodata = () => {
 
   const createWaypointsGpxFileContents = useCallback(() => {
     const gpx = `<?xml version="1.0" encoding="UTF-8"?>
-    <gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
-      <trk>
-        <name>Cross-Country Run</name>
-        <trkseg>
-          ${waypoints
-            .map(
-              (waypoint) =>
-                `<trkpt lat="${waypoint[0]}" lon="${waypoint[1]}"></trkpt>`
-            )
-            .join("\n")}
-        </trkseg>
-      </trk>
-    </gpx>`;
+<gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <trk>
+    <name>Cross-Country Run</name>
+    <trkseg>
+        ${waypoints
+          .map(([lat, lng]) => `<trkpt lat="${lat}" lon="${lng}"></trkpt>`)
+          .join("\n")}
+    </trkseg>
+    </trk>
+</gpx>`;
 
     return gpx;
   }, [waypoints]);

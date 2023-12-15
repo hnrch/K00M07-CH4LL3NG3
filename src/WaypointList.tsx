@@ -11,8 +11,8 @@ const WaypointList = () => {
   return (
     <ul>
       <DraggableList onChange={onWaypointSort}>
-        {waypoints.map((waypoint, idx) => (
-          <li key={`${waypoint[0]}-${waypoint[1]}`} className={styles.item}>
+        {waypoints.map(([lat, lng], idx) => (
+          <li key={`${idx}${lat}${lng}`} className={styles.item}>
             <Menu color="gray" size={16} />
             <span>Waypoint {idx + 1}</span>
             <span
