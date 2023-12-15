@@ -129,12 +129,51 @@ const useGeodata = () => {
     [waypoints]
   );
 
+  const createWaypointsGpxFileContents = useCallback(() => {
+    const gpx = `<?xml version="1.0" encoding="UTF-8"?>
+    <gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+      <trk>
+        <name>Cross-Country Run</name>
+        <trkseg>
+          ${waypoints
+            .map(
+              (waypoint) =>
+                `<trkpt lat="${waypoint[0]}" lon="${waypoint[1]}"></trkpt>`
+            )
+            .join("\n")}
+        </trkseg>
+      </trk>
+    </gpx>`;
+
+    return gpx;
+  }, [waypoints]);
+
+  const downloadGpxFile = useCallback(() => {
+    const gpxContent = createWaypointsGpxFileContents();
+
+    // Create a Blob containing the GPX content
+    const blob = new Blob([gpxContent], { type: "application/xml" });
+
+    // Create a download link
+    const a = document.createElement("a");
+    a.href = window.URL.createObjectURL(blob);
+    a.download = "track.gpx";
+
+    // Append the link to the body and trigger the download
+    document.body.appendChild(a);
+    a.click();
+
+    // Remove the link from the body
+    document.body.removeChild(a);
+  }, [createWaypointsGpxFileContents]);
+
   return {
     waypoints,
     onWaypointAdd,
     onWaypointRemove,
     onWaypointChange,
     onWaypointSort,
+    downloadGpxFile,
   };
 };
 
