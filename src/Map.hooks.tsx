@@ -1,19 +1,14 @@
 import "leaflet/dist/leaflet.css";
 import styles from "./Map.module.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { map, divIcon, layerGroup, tileLayer, polyline, marker } from "leaflet";
 
 import type {
   LeafletMouseEventHandlerFn,
   LatLngTuple,
-  Map as LeafletMap,
+  Map as LMap,
   LayerGroup,
 } from "leaflet";
-import type {
-  Waypoint,
-  WaypointAddHandler,
-  WaypointChangeHandler,
-} from "./App.hooks";
 
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiaG5yY2hyZGwiLCJhIjoiY2xxMnBjZnN1MDQyZjJpcGR1aW9pcHFsMiJ9.tPNurWX_oV0Ai-7cetcKyw";
@@ -21,7 +16,14 @@ const TILE_SOURCE = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/tiles/
 const TILE_ATTRIBUTION = "&copy; Mapbox";
 const INITIAL_CENTER = [52.388, 13.058] as LatLngTuple;
 const INITIAL_ZOOM = 14;
-const MARKER_SIZE = 32;
+const MARKER_SIZE = 24;
+const MAP_ID = "map";
+
+type UseMapArgs = {
+  waypoints: ReturnType<typeof useGeodata>["waypoints"];
+  onWaypointAdd?: ReturnType<typeof useGeodata>["onWaypointAdd"];
+  onWaypointChange: ReturnType<typeof useGeodata>["onWaypointChange"];
+};
 
 const createIcon = (idx: number) =>
   divIcon({
@@ -31,20 +33,14 @@ const createIcon = (idx: number) =>
     html: `<span>${idx + 1}</span>`,
   });
 
-type UseMapArgs = {
-  waypoints: Waypoint[];
-  onWaypointAdd?: WaypointAddHandler;
-  onWaypointChange: WaypointChangeHandler;
-};
-
 const useMap = ({ waypoints, onWaypointAdd, onWaypointChange }: UseMapArgs) => {
-  const mapRef = useRef<LeafletMap | null>(null);
+  const mapRef = useRef<LMap | null>(null);
 
   const waypointMarkerLayerGroupRef = useRef<LayerGroup>(layerGroup());
   const waypointPolylineLayerGroupRef = useRef<LayerGroup>(layerGroup());
 
   useEffect(() => {
-    mapRef.current = map("map", { doubleClickZoom: false }).setView(
+    mapRef.current = map(MAP_ID, { doubleClickZoom: false }).setView(
       INITIAL_CENTER,
       INITIAL_ZOOM
     );
@@ -99,4 +95,47 @@ const useMap = ({ waypoints, onWaypointAdd, onWaypointChange }: UseMapArgs) => {
   }, [onWaypointChange, waypoints]);
 };
 
-export { useMap };
+const useGeodata = () => {
+  const [waypoints, setWaypoints] = useState<LatLngTuple[]>([]);
+
+  const onWaypointAdd = useCallback((waypoint: LatLngTuple) => {
+    setWaypoints((waypoints) => [...waypoints, waypoint]);
+  }, []);
+
+  const onWaypointRemove = useCallback((idxToRemove: number) => {
+    setWaypoints((waypoints) =>
+      waypoints.filter((_, idx) => idx !== idxToRemove)
+    );
+  }, []);
+
+  const onWaypointChange = useCallback(
+    (waypointUpdate: LatLngTuple, idxToChange: number) => {
+      setWaypoints((waypoints) =>
+        waypoints.map((waypoint, idx) =>
+          idx === idxToChange ? waypointUpdate : waypoint
+        )
+      );
+    },
+    []
+  );
+
+  const onWaypointSort = useCallback(
+    (idxFrom: number, idxTo: number) => {
+      const waypoint = waypoints[idxFrom];
+      const newWaypoints = waypoints.filter((_, idx) => idx !== idxFrom);
+      newWaypoints.splice(idxTo, 0, waypoint);
+      setWaypoints(newWaypoints);
+    },
+    [waypoints]
+  );
+
+  return {
+    waypoints,
+    onWaypointAdd,
+    onWaypointRemove,
+    onWaypointChange,
+    onWaypointSort,
+  };
+};
+
+export { useGeodata, useMap, MAP_ID };

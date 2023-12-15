@@ -1,23 +1,16 @@
 import styles from "./WaypointList.module.css";
 import DraggableList from "./DraggableList";
 import { Trash2, Menu } from "react-feather";
+import { useContext } from "react";
+import { GeodataContext } from "./Map.context";
 
-import type {
-  Waypoint,
-  WaypointRemoveHandler,
-  WaypointSortHandler,
-} from "./App.hooks";
+const WaypointList = () => {
+  const { waypoints, onWaypointRemove, onWaypointSort } =
+    useContext(GeodataContext);
 
-type Props = {
-  waypoints: Waypoint[];
-  onRemove: WaypointRemoveHandler;
-  onSort: WaypointSortHandler;
-};
-
-const WaypointList = ({ waypoints, onRemove, onSort }: Props) => {
   return (
     <ul>
-      <DraggableList onChange={onSort}>
+      <DraggableList onChange={onWaypointSort}>
         {waypoints.map((waypoint, idx) => (
           <li key={`${waypoint[0]}-${waypoint[1]}`} className={styles.item}>
             <Menu color="gray" size={16} />
@@ -25,7 +18,9 @@ const WaypointList = ({ waypoints, onRemove, onSort }: Props) => {
             <span
               className={styles.removebtn}
               role="button"
-              onClick={() => onRemove(idx)}
+              onClick={
+                onWaypointRemove ? () => onWaypointRemove(idx) : undefined
+              }
             >
               <Trash2 color="gray" size={16} />
             </span>
@@ -37,4 +32,3 @@ const WaypointList = ({ waypoints, onRemove, onSort }: Props) => {
 };
 
 export default WaypointList;
-export type { Props as WaypointListProps };

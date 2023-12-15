@@ -1,30 +1,14 @@
 import styles from "./Sidebar.module.css";
 import WaypointList from "./WaypointList";
 
-import type {
-  Waypoint,
-  WaypointRemoveHandler,
-  WaypointSortHandler,
-} from "./App.hooks";
-
-type Props = {
-  waypoints: Waypoint[];
-  onWaypointRemove: WaypointRemoveHandler;
-  onWaypointSort: WaypointSortHandler;
-};
-
-const Sidebar = ({ waypoints, onWaypointRemove, onWaypointSort }: Props) => (
+const Sidebar = () => (
   <aside className={styles.wrapper}>
     <div className={styles.header}>
       <h3>Route Builder</h3>
       <hr className={styles.divider} />
     </div>
     <div className={styles.content}>
-      <WaypointList
-        waypoints={waypoints}
-        onRemove={onWaypointRemove}
-        onSort={onWaypointSort}
-      />
+      <WaypointList />
     </div>
     <div className={styles.footer}>
       <button>Download .gpx</button>
@@ -33,4 +17,3 @@ const Sidebar = ({ waypoints, onWaypointRemove, onWaypointSort }: Props) => (
 );
 
 export default Sidebar;
-export type { Props as SidebarProps };

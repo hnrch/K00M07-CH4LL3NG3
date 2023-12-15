@@ -1,30 +1,16 @@
 import styles from "./App.module.css";
 import Map from "./Map";
+import { MapProvider } from "./Map.provider";
 import Sidebar from "./Sidebar";
-import { useWaypoints } from "./App.hooks";
 
 function App() {
-  const {
-    waypoints,
-    onWaypointAdd,
-    onWaypointRemove,
-    onWaypointChange,
-    onWaypointSort,
-  } = useWaypoints();
-
   return (
-    <div className={styles.wrapper}>
-      <Sidebar
-        waypoints={waypoints}
-        onWaypointRemove={onWaypointRemove}
-        onWaypointSort={onWaypointSort}
-      />
-      <Map
-        waypoints={waypoints}
-        onWaypointAdd={onWaypointAdd}
-        onWaypointChange={onWaypointChange}
-      />
-    </div>
+    <MapProvider>
+      <div className={styles.wrapper}>
+        <Sidebar />
+        <Map />
+      </div>
+    </MapProvider>
   );
 }
 

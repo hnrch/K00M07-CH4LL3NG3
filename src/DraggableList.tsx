@@ -1,4 +1,4 @@
-import { DragEvent } from "react";
+import type { DragEvent } from "react";
 
 type Props = {
   children: Array<JSX.Element>;
