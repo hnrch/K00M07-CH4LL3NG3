@@ -1,6 +1,6 @@
 import styles from "./Sidebar.module.css";
 import WaypointList from "./WaypointList";
-import WaypointListDownloadButton from "./WaypointListDownloadButton";
+import WaypointDownloadButton from "./WaypointDownloadButton";
 
 const Sidebar = () => (
   <aside className={styles.wrapper}>
@@ -12,7 +12,7 @@ const Sidebar = () => (
       <WaypointList />
     </div>
     <div className={styles.footer}>
-      <WaypointListDownloadButton />
+      <WaypointDownloadButton />
     </div>
   </aside>
 );

@@ -1,22 +1,22 @@
 import { createContext } from "react";
-import { useGeodata } from "./Map.hooks";
+import { useGeodata } from "./Geodata.hooks";
 
 const GeodataContext = createContext<ReturnType<typeof useGeodata>>({
   waypoints: [],
   onWaypointChange: () => {
-    throw new Error("not implemented");
+    throw new Error("not provided");
   },
   onWaypointAdd: () => {
-    throw new Error("not implemented");
+    throw new Error("not provided");
   },
   onWaypointRemove: () => {
-    throw new Error("not implemented");
+    throw new Error("not provided");
   },
   onWaypointSort: () => {
-    throw new Error("not implemented");
+    throw new Error("not provided");
   },
   downloadGpxFile: () => {
-    throw new Error("not implemented");
+    throw new Error("not provided");
   },
 });
 

@@ -8,9 +8,15 @@
     flex: 1;
     margin-left: 8px;
   }
+  cursor: grab;
+  &:hover {
+    background-color: color-mix(in srgb, var(--dark-gray), #000 10%);
+  }
 }
 
 .removebtn {
   display: flex;
   align-items: center;
+  cursor: pointer;
+  padding: 4px;
 }

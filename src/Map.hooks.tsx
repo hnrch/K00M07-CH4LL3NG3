@@ -1,7 +1,8 @@
 import "leaflet/dist/leaflet.css";
 import styles from "./Map.module.css";
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useRef } from "react";
 import { map, divIcon, layerGroup, tileLayer, polyline, marker } from "leaflet";
+import { useGeodata } from "./Geodata.hooks";
 
 import type {
   LeafletMouseEventHandlerFn,
@@ -35,23 +36,26 @@ const createIcon = (idx: number) =>
 
 const useMap = ({ waypoints, onWaypointAdd, onWaypointChange }: UseMapArgs) => {
   const mapRef = useRef<LMap | null>(null);
-
   const waypointMarkerLayerGroupRef = useRef<LayerGroup>(layerGroup());
   const waypointPolylineLayerGroupRef = useRef<LayerGroup>(layerGroup());
 
   useEffect(() => {
+    // initialize map
     mapRef.current = map(MAP_ID, { doubleClickZoom: false }).setView(
       INITIAL_CENTER,
       INITIAL_ZOOM
     );
 
+    // add tile layer
     tileLayer(TILE_SOURCE, {
       attribution: TILE_ATTRIBUTION,
     }).addTo(mapRef.current);
 
+    // add waypoint layer groups
     waypointMarkerLayerGroupRef.current.addTo(mapRef.current);
     waypointPolylineLayerGroupRef.current.addTo(mapRef.current);
 
+    // register map clicks
     const handleClick: LeafletMouseEventHandlerFn = (e) => {
       if (onWaypointAdd) {
         const { lat, lng } = e.latlng;
@@ -62,27 +66,25 @@ const useMap = ({ waypoints, onWaypointAdd, onWaypointChange }: UseMapArgs) => {
     mapRef.current.on("click", handleClick);
 
     return () => {
+      // cleanup
       mapRef.current?.off("click", handleClick);
       mapRef.current?.remove();
     };
   }, [onWaypointAdd]);
 
   useEffect(() => {
+    // clear layers
     waypointMarkerLayerGroupRef.current.clearLayers();
     waypointPolylineLayerGroupRef.current.clearLayers();
 
+    // create and add markers
     waypoints.forEach((waypoint, idx) => {
       const waypointMarker = marker(waypoint, {
         icon: createIcon(idx),
         draggable: true,
       }).addTo(waypointMarkerLayerGroupRef.current);
 
-      // TODO: unregister this event listener before marker is removed.
-      waypointMarker.on("dragend", function (e) {
-        const { lat, lng } = e.target.getLatLng();
-        onWaypointChange([lat, lng], idx);
-      });
-
+      // create and add lines
       if (idx !== 0) {
         const previousWaypoint = waypoints[idx - 1];
         polyline([waypoint, previousWaypoint], {
@@ -91,87 +93,18 @@ const useMap = ({ waypoints, onWaypointAdd, onWaypointChange }: UseMapArgs) => {
           opacity: 0.9,
         }).addTo(waypointPolylineLayerGroupRef.current);
       }
+
+      // make marker draggable
+      waypointMarker.on(
+        "dragend",
+        // TODO: unregister this event listener before marker is removed.
+        function (e) {
+          const { lat, lng } = e.target.getLatLng();
+          onWaypointChange([lat, lng], idx);
+        }
+      );
     });
   }, [onWaypointChange, waypoints]);
 };
 
-const useGeodata = () => {
-  const [waypoints, setWaypoints] = useState<LatLngTuple[]>([]);
-
-  const onWaypointAdd = useCallback((waypoint: LatLngTuple) => {
-    setWaypoints((waypoints) => [...waypoints, waypoint]);
-  }, []);
-
-  const onWaypointRemove = useCallback((idxToRemove: number) => {
-    setWaypoints((waypoints) =>
-      waypoints.filter((_, idx) => idx !== idxToRemove)
-    );
-  }, []);
-
-  const onWaypointChange = useCallback(
-    (updatedWaypoint: LatLngTuple, idxToChange: number) => {
-      setWaypoints((waypoints) =>
-        waypoints.map((waypoint, idx) =>
-          idx === idxToChange ? updatedWaypoint : waypoint
-        )
-      );
-    },
-    []
-  );
-
-  const onWaypointSort = useCallback(
-    (idxFrom: number, idxTo: number) => {
-      const waypoint = waypoints[idxFrom];
-      const newWaypoints = waypoints.filter((_, idx) => idx !== idxFrom);
-      newWaypoints.splice(idxTo, 0, waypoint);
-      setWaypoints(newWaypoints);
-    },
-    [waypoints]
-  );
-
-  const createWaypointsGpxFileContents = useCallback(() => {
-    const gpx = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
-    <trk>
-    <name>Cross-Country Run</name>
-    <trkseg>
-        ${waypoints
-          .map(([lat, lng]) => `<trkpt lat="${lat}" lon="${lng}"></trkpt>`)
-          .join("\n")}
-    </trkseg>
-    </trk>
-</gpx>`;
-
-    return gpx;
-  }, [waypoints]);
-
-  const downloadGpxFile = useCallback(() => {
-    const gpxContent = createWaypointsGpxFileContents();
-
-    // Create a Blob containing the GPX content
-    const blob = new Blob([gpxContent], { type: "application/xml" });
-
-    // Create a download link
-    const a = document.createElement("a");
-    a.href = window.URL.createObjectURL(blob);
-    a.download = "track.gpx";
-
-    // Append the link to the body and trigger the download
-    document.body.appendChild(a);
-    a.click();
-
-    // Remove the link from the body
-    document.body.removeChild(a);
-  }, [createWaypointsGpxFileContents]);
-
-  return {
-    waypoints,
-    onWaypointAdd,
-    onWaypointRemove,
-    onWaypointChange,
-    onWaypointSort,
-    downloadGpxFile,
-  };
-};
-
-export { useGeodata, useMap, MAP_ID };
+export { useMap, MAP_ID };

@@ -1,16 +1,16 @@
 import styles from "./App.module.css";
+import { GeodataProvider } from "./Geodata.provider";
 import Map from "./Map";
-import { MapProvider } from "./Map.provider";
 import Sidebar from "./Sidebar";
 
 function App() {
   return (
-    <MapProvider>
+    <GeodataProvider>
       <div className={styles.wrapper}>
         <Sidebar />
         <Map />
       </div>
-    </MapProvider>
+    </GeodataProvider>
   );
 }
 

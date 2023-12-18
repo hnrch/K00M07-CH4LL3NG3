@@ -2,7 +2,7 @@ import styles from "./WaypointList.module.css";
 import DraggableList from "./DraggableList";
 import { Trash2, Menu } from "react-feather";
 import { useContext } from "react";
-import { GeodataContext } from "./Map.context";
+import { GeodataContext } from "./Geodata.context";
 
 const WaypointList = () => {
   const { waypoints, onWaypointRemove, onWaypointSort } =

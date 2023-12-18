@@ -1,16 +1,14 @@
-import { GeodataContext } from "./Map.context";
-import { useGeodata, useMap } from "./Map.hooks";
+import { GeodataContext } from "./Geodata.context";
 
 import type { ReactNode } from "react";
+import { useGeodata } from "./Geodata.hooks";
 
 type Props = {
   children?: ReactNode;
 };
 
-const MapProvider = ({ children }: Props) => {
+const GeodataProvider = ({ children }: Props) => {
   const geodata = useGeodata();
-
-  useMap(geodata);
 
   return (
     <GeodataContext.Provider value={geodata}>
@@ -18,4 +16,4 @@ const MapProvider = ({ children }: Props) => {
     </GeodataContext.Provider>
   );
 };
-export { MapProvider };
+export { GeodataProvider };
