@@ -5,12 +5,12 @@ import { useContext } from "react";
 import { GeodataContext } from "./Geodata.context";
 
 const WaypointList = () => {
-  const { waypoints, onWaypointRemove, onWaypointSort } =
+  const { waypoints, onWaypointRemove, onWaypointMove } =
     useContext(GeodataContext);
 
   return (
     <ul>
-      <DraggableList onChange={onWaypointSort}>
+      <DraggableList onChange={onWaypointMove}>
         {waypoints.map(([lat, lng], idx) => (
           <li key={`${idx}${lat}${lng}`} className={styles.item}>
             <Menu color="gray" size={16} />

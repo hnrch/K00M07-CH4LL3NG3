@@ -12,7 +12,7 @@ const GeodataContext = createContext<ReturnType<typeof useGeodata>>({
   onWaypointRemove: () => {
     throw new Error("not provided");
   },
-  onWaypointSort: () => {
+  onWaypointMove: () => {
     throw new Error("not provided");
   },
   downloadGpxFile: () => {

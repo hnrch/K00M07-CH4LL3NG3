@@ -4,20 +4,23 @@ import { useCallback, useState } from "react";
 const useGeodata = () => {
   const [waypoints, setWaypoints] = useState<LatLngTuple[]>([]);
 
+  // add waypoint by lat/lng
   const onWaypointAdd = useCallback((waypoint: LatLngTuple) => {
-    setWaypoints((waypoints) => [...waypoints, waypoint]);
+    setWaypoints((_waypoints) => [..._waypoints, waypoint]);
   }, []);
 
+  // remove waypoint by index
   const onWaypointRemove = useCallback((idxToRemove: number) => {
-    setWaypoints((waypoints) =>
-      waypoints.filter((_, idx) => idx !== idxToRemove)
+    setWaypoints((_waypoints) =>
+      _waypoints.filter((_, idx) => idx !== idxToRemove)
     );
   }, []);
 
+  // change waypoint by index
   const onWaypointChange = useCallback(
     (updatedWaypoint: LatLngTuple, idxToChange: number) => {
-      setWaypoints((waypoints) =>
-        waypoints.map((waypoint, idx) =>
+      setWaypoints((_waypoints) =>
+        _waypoints.map((waypoint, idx) =>
           idx === idxToChange ? updatedWaypoint : waypoint
         )
       );
@@ -25,16 +28,16 @@ const useGeodata = () => {
     []
   );
 
-  const onWaypointSort = useCallback(
-    (idxFrom: number, idxTo: number) => {
-      const movedWaypoint = waypoints[idxFrom];
-      const updatedWaypoints = waypoints
-        .filter((_, idx) => idx !== idxFrom)
-        .splice(idxTo, 0, movedWaypoint);
-      setWaypoints(updatedWaypoints);
-    },
-    [waypoints]
-  );
+  // move waypoint by index
+  const onWaypointMove = useCallback((idxFrom: number, idxTo: number) => {
+    setWaypoints((_waypoints) => {
+      const movedWaypoint = _waypoints[idxFrom];
+      const updatedWaypoints = _waypoints.filter((_, idx) => idx !== idxFrom);
+      updatedWaypoints.splice(idxTo, 0, movedWaypoint);
+
+      return updatedWaypoints;
+    });
+  }, []);
 
   /**
    * link: https://www.topografix.com/GPX/1/1/
@@ -79,7 +82,7 @@ const useGeodata = () => {
     onWaypointAdd,
     onWaypointRemove,
     onWaypointChange,
-    onWaypointSort,
+    onWaypointMove,
     downloadGpxFile,
   };
 };
